@@ -1,8 +1,8 @@
 <?php
-    include "session.php";
     include "helpers/signup.php";
+    include "session.php";
 
-    $errors = [];
+    $errors = []; 
 
     if(isset($_POST['submit'])) {
         if(!$_POST['name']) {
@@ -14,21 +14,22 @@
         if(!$_POST['password']) {
             $errors[] = "Password is required.";
         }
-        if($_POST['password'] != $_POST['confirm_password']){
+        if($_POST['password'] != $_POST['confirm_password']) {
             $errors[] = "You must confirm your password.";
         }
-
         if(empty($errors)) {
-            if(!check_existing_email($_POST['email'])){
-                $user = save_registration($_POST['name'], $_POST['email'], $_POST['password']);
+            if(!check_existing_email($_POST['email'])) {
+                $user = save_registration($_POST['name'],$_POST['email'], $_POST['password']);
                 if(!empty($user)) {
                     $_SESSION['id'] = $user['id'];
                     $_SESSION['name'] = $user['name'];
-
                     header("Location: feed");
+                } else {
+                    $errors[] = "There was an error logging in your account.";
                 }
+
             } else {
-                $errors[] = "Email already exist.";
+                $errors[] = "Email address already exist.";
             }
         }
     } else {
@@ -39,11 +40,12 @@
         ];
     }
 ?>
+
 <?php include 'layouts/_header.php';?>
 <main>
     <section id="signup" class="container">
         <div id="signup-form">
-            <?php if(!empty($errors)) {?>
+            <?php if (!empty($errors)) { ?>
                 <?php include "layouts/_errors.php" ?>
             <?php } ?>
             <h1>Register an account</h1>
